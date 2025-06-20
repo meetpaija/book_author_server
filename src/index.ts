@@ -1,6 +1,6 @@
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
-
+import './config/sequelize.ts';
 
 const typeDefs = `#graphql
   # Comments in GraphQL strings (such as this one) start with the hash (#) symbol.
@@ -41,8 +41,8 @@ const books = [
 const resolvers = {
   Query: {
     getBooks: () => books,
-    getFirstBook: (parent, { id }) => books[id],
-    getBookByID: (parent, { id }) => books.find(book => book.id === id),
+    getFirstBook: (parent: any, { id }: any) => books[id],
+    getBookByID: (parent: any, { id }: any) => books.find(book => book.id === id),
   },
 };
 
