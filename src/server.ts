@@ -10,16 +10,10 @@ const server = new ApolloServer({
   introspection: true,
 });
 
-// sleep function
-function sleep(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 async function startServer() {
   try {
     console.log('Starting server')
     await sequelize.authenticate();
-    // await sequelize.sync();
     console.log('Sequelize authenticated');
 
     const { url } = await startStandaloneServer(server, {
