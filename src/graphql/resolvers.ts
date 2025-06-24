@@ -6,23 +6,39 @@ import { Op } from 'sequelize';
 export const resolvers = {
     Date: GraphQLDate,
     Query: {
-        getBooks: (_obj: any, args: { limit?: number, offset?: number, searchByTitle?: string }) => {
-            return args.searchByTitle ? 
-            Book.findAll({ include: [Author], limit: args.limit, offset: args.offset, where: { 
-                title: {
-                    [Op.like]: `%${args.searchByTitle}%`
-                }
-            }}) :
-            Book.findAll({ include: [Author], limit: args.limit, offset: args.offset })
+        getBooks: async (_obj: any, args: { limit?: number, offset?: number, searchByTitle?: string }) => {
+            const { rows: data, count: totalCount } = args.searchByTitle ? 
+            await Book.findAndCountAll({ include: [Author], limit: args.limit, offset: args.offset, 
+                order: [['title', 'ASC']],
+                where: { 
+                    title: {
+                        [Op.like]: `%${args.searchByTitle}%`
+                    }
+            }}) : 
+            await Book.findAndCountAll({ include: [Author], limit: args.limit, offset: args.offset, order: [['title', 'ASC']] });
+
+           return { data: data.map(x=>x.dataValues), totalCount }
         },
-        getAuthors: (_obj: any, args: { limit?: number, offset?: number, searchByName?: string }) => {
-            return args.searchByName ? 
-            Author.findAll({ include: [Book], limit: args.limit, offset: args.offset, where: { 
+        getAuthors: async (_obj: any, args: { limit?: number, offset?: number, searchByName?: string }) => {
+
+            const totalCount = args.searchByName ? 
+            await Author.count({
+                where: { 
+                    name: {
+                        [Op.like]: `%${args.searchByName}%`
+                    }
+            }}) : 
+            await Author.count();
+
+            const data = args.searchByName ? 
+            Author.findAll({ include: [Book], limit: args.limit, offset: args.offset, order: [['name', 'ASC']], where: { 
                 name: {
                     [Op.like]: `%${args.searchByName}%`
                 }
             }}) :
-            Author.findAll({ include: [Book], limit: args.limit, offset: args.offset })
+            Author.findAll({ include: [Book], limit: args.limit, offset: args.offset, order: [['name', 'ASC']], })
+
+            return { data, totalCount }
         }
     },
     Book: {

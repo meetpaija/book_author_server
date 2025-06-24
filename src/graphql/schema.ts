@@ -11,6 +11,11 @@ export const typeDefs = `#graphql
         author: Author
     }
 
+    type BookList {
+        data: [Book]!
+        totalCount: Int!
+    }
+
     input BookInput {
         title: String!
         description: String
@@ -26,6 +31,11 @@ export const typeDefs = `#graphql
         books: [Book]
     }
 
+    type AuthorList {
+        data: [Author]!
+        totalCount: Int!
+    }
+
     input AuthorInput {
         name: String!
         biography: String
@@ -33,8 +43,8 @@ export const typeDefs = `#graphql
     }
 
     type Query {
-        getBooks(limit: Int, offset: Int, searchByTitle: String): [Book]
-        getAuthors(limit: Int, offset: Int, searchByName: String): [Author]
+        getBooks(limit: Int, offset: Int, searchByTitle: String): BookList
+        getAuthors(limit: Int, offset: Int, searchByName: String): AuthorList
     }
 
     type Mutation {
