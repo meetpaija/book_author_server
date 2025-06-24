@@ -31,12 +31,12 @@ export const resolvers = {
             await Author.count();
 
             const data = args.searchByName ? 
-            Author.findAll({ include: [Book], limit: args.limit, offset: args.offset, where: { 
+            Author.findAll({ include: [Book], limit: args.limit, offset: args.offset, order: [['name', 'ASC']], where: { 
                 name: {
                     [Op.like]: `%${args.searchByName}%`
                 }
             }}) :
-            Author.findAll({ include: [Book], limit: args.limit, offset: args.offset })
+            Author.findAll({ include: [Book], limit: args.limit, offset: args.offset, order: [['name', 'ASC']], })
 
             return { data, totalCount }
         }
